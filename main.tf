@@ -6,22 +6,23 @@ provider "google" {
 }
 
 ### NETWORK
-data "google_compute_network" "default" {
+resource "google_compute_network" "default" {
   name                    = "default"
+  auto_create_subnetworks = false
 }
 
 ## SUBNET
 resource "google_compute_subnetwork" "subnet-1" {
   name                     = var.subnet-name
   ip_cidr_range            = var.subnet-cidr
-  network                  = data.google_compute_network.default.self_link
+  network                  = google_compute_network.default.self_link
   region                   = var.region
   private_ip_google_access = var.private_google_access
 }
 
 resource "google_compute_firewall" "default" {
   name    = "test-firewall"
-  network = data.google_compute_network.default.self_link
+  network = google_compute_network.default.self_link
 
   allow {
     protocol = "icmp"
@@ -52,7 +53,7 @@ resource "google_compute_instance" "nginx_instance" {
   }
 
   network_interface {
-    network = data.google_compute_network.default.self_link
+    network = google_compute_network.default.self_link
     subnetwork = google_compute_subnetwork.subnet-1.self_link
     access_config {
   
@@ -76,7 +77,7 @@ resource "google_compute_instance" "web1" {
 
   network_interface {
     # A default network is created for all GCP projects
-    network = data.google_compute_network.default.self_link
+    network = google_compute_network.default.self_link
     subnetwork = google_compute_subnetwork.subnet-1.self_link
   }
 }
@@ -95,7 +96,7 @@ resource "google_compute_instance" "web2" {
   }
 
   network_interface {
-    network = data.google_compute_network.default.self_link
+    network = google_compute_network.default.self_link
     subnetwork = google_compute_subnetwork.subnet-1.self_link
   }
 }
@@ -114,7 +115,7 @@ resource "google_compute_instance" "web3" {
   }
 
   network_interface {
-    network = data.google_compute_network.default.self_link
+    network = google_compute_network.default.self_link
     subnetwork = google_compute_subnetwork.subnet-1.self_link
   }  
 }
@@ -134,7 +135,7 @@ resource "google_compute_instance" "mysqldb" {
   }
 
   network_interface {
-    network = data.google_compute_network.default.self_link
+    network = google_compute_network.default.self_link
     subnetwork = google_compute_subnetwork.subnet-1.self_link
   }  
 }
