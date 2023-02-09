@@ -1,0 +1,7 @@
+gcloud auth login
+
+gcloud config set project eao-terraform
+
+gcloud services enable sqladmin.googlepais.com
+
+gcloud compute instances list
